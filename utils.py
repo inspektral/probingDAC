@@ -7,6 +7,8 @@ import soundfile as sf
 import dac
 from audiotools import AudioSignal
 
+# Audio file I/O
+
 def audio_file_to_tensor(file_path, to_mono=True):
     audio, sr = sf.read(file_path)
     if to_mono and len(audio.shape) > 1:
@@ -14,27 +16,39 @@ def audio_file_to_tensor(file_path, to_mono=True):
     audio = torch.tensor(audio, dtype=torch.float32)
     return audio, sr
 
-def encode_and_decode(model, audio, sr, device):
-    snd = AudioSignal(audio, sr)
+# Generators
 
-    snd.to(model.device)
-    snd_x = model.preprocess(snd.audio_data, snd.sample_rate)
-
-    with torch.no_grad():
-        snd_z, snd_codes, snd_latents, _, _ = model.encode(snd_x)
-        snd_decoded = model.decode(snd_z)
-
-    audio = snd_decoded[0,0,:].cpu().detach().numpy()
-    return audio
+def sine(frequency, duration, sr):
+    t = np.linspace(0, duration, int(duration*sr), endpoint=False)
+    signal = np.sin(2 * np.pi * frequency * t)
+    return torch.tensor(signal, dtype=torch.float32)
 
 def sine_sweep(f0, f1, duration, sr):
     t = np.linspace(0, duration, int(duration*sr), endpoint=False)
     freqs = np.logspace(np.log10(f0), np.log10(f1), num=len(t), endpoint=True)
     signal = np.sin(np.pi * freqs * t)
-    return signal
+    return torch.tensor(signal, dtype=torch.float32)
 
-def white_noise(duration, sr):
-    return np.random.randn(int(duration*sr))
+def noise(duration, sr):
+    signal = np.random.randn(int(duration*sr))
+    return torch.tensor(signal, dtype=torch.float32)
+
+def silence(duration, sr):
+    signal = np.zeros(int(duration*sr))
+    return torch.tensor(signal, dtype=torch.float32)
+
+def impulse(duration, sr):
+    signal = np.zeros(int(duration*sr))
+    signal[0] = 1
+    return torch.tensor(signal, dtype=torch.float32)
+
+def sawtooth(frequency, duration, sr):
+    t = np.linspace(0, duration, int(duration*sr), endpoint=False)
+    signal = 2 * (frequency * t - np.floor(frequency * t + 0.5))
+    return torch.tensor(signal, dtype=torch.float32)
+
+
+# Plotting functions
 
 def plot_waveform(audio, sr):
     plt.style.use('dark_background')
