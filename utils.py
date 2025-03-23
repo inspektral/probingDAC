@@ -51,30 +51,27 @@ def sawtooth(frequency, duration, sr):
 # Plotting functions
 
 def plot_waveform(audio, sr):
-    plt.style.use('dark_background')
     plt.figure(figsize=(15, 6))
     time = np.arange(len(audio)) / sr
     plt.plot(time, audio, linewidth=1, color='#00ff00')
-    plt.xlabel('Time (seconds)', color='white')
-    plt.ylabel('Amplitude', color='white')
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('Amplitude')
     plt.title('Audio Waveform', color='white')
     plt.grid(True, alpha=0.2)
     plt.tight_layout()
     plt.show()
 
-def plot_heatmap(snd):
-    plt.figure(figsize=(15, 8))
-    plt.style.use('dark_background')
+def plot_heatmap(snd, x_label='Time Frame', y_label='Dimension', title='Latent space Heatmap'):
+    plt.figure(figsize=(5, 3))
     sns.heatmap(snd.cpu().numpy()[0,:,:], cmap='viridis')
-    plt.xlabel('Time Frame', color='white')
-    plt.ylabel('Dimension', color='white')
-    plt.title('Latent space Heatmap', color='white')
+    plt.xlabel('Time Frame')
+    plt.ylabel('Dimension')
+    plt.title(title)
     plt.tight_layout()
     plt.show()
 
 def plot_lines(snd):
     plt.figure(figsize=(15, 8))
-    plt.style.use('dark_background')
     
     # Get data and transpose to plot each dimension
     data = snd.cpu().numpy()[0,:,:]
@@ -85,9 +82,9 @@ def plot_lines(snd):
         plt.plot(time_steps, data[i,:], alpha=0.5, linewidth=0.5)
     
     plt.grid(True, alpha=0.2)
-    plt.xlabel('Time Frame', color='white')
-    plt.ylabel('Amplitude', color='white')
-    plt.title('Latent Space Time Series', color='white')
+    plt.xlabel('Time Frame')
+    plt.ylabel('Amplitude')
+    plt.title('Latent Space Time Series')
     plt.tight_layout()
     plt.show()
 
@@ -103,7 +100,6 @@ def plot_lines_separated(snd):
     
     # Create figure and subplots
     fig, axes = plt.subplots(n_rows, n_cols, figsize=(20, n_rows * 3))
-    plt.style.use('dark_background')
     
     # Flatten axes for easier iteration
     axes = axes.flatten()
@@ -120,7 +116,7 @@ def plot_lines_separated(snd):
         axes[i].set_ylim(y_min, y_max)  # Set consistent y-axis limits
         
     
-    plt.title('Latent Space Dimensions', color='white', fontsize=16)
+    plt.title('Latent Space Dimensions', fontsize=16)
     plt.tight_layout()
     plt.show()
 
